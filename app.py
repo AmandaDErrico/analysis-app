@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import mysql.connector as sql
 from flaskext.mysql import MySQL
 import pymysql
@@ -15,9 +15,11 @@ app.config['MYSQL_DB'] = 'MyDB'
 
 mysql.init_app(app)
 
+
 @app.before_first_request
 def before_first_request_func():
     createrPartitionsInsertData()
+
 
 @app.route('/')
 def home():
@@ -53,7 +55,6 @@ def home():
 #             con.close()
 
 def createrPartitionsInsertData():
-
     # for A less than join date - (A, 2021-01-07)
     # for A join date and later - (A, MAXVALUE)
     # for B less than join date - (B, 2021-01-07)
@@ -133,14 +134,14 @@ def createrPartitionsInsertData():
     print("Table sales_cid inserted successfully")
     conn.close()
 
+
 @app.route("/mostPurchased", methods=['GET', 'POST'])
 def mostPurchased():
-    if request.method == 'POST':
-        print("THIS WAS A POST")
-        name = request.form.get("customer_id")
     if request.method == 'GET':
         print("THIS WAS A GET")
         name = request.args.get("customer_id")
+    else:
+        return Response("Record not found", status=400)
 
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
     cur = conn.cursor()
@@ -153,13 +154,12 @@ def mostPurchased():
     conn.close()
 
     for result in rows:
-        d.update({result[0]: {"customer_id":result[0],"product_id":result[2]}})
+        d.update({result[0]: {"customer_id": result[0], "product_id": result[2]}})
     return json.dumps(d)
 
 
 @app.route('/query1')
 def querylist1():
-
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
     cur = conn.cursor()
 
@@ -179,7 +179,6 @@ def querylist1():
 
 @app.route('/query2')
 def querylist2():
-
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
     cur = conn.cursor()
 

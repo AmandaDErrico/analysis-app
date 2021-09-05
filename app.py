@@ -134,7 +134,9 @@ def createrPartitionsInsertData():
     print("Table sales_cid inserted successfully")
     conn.close()
 
-
+# make different endpoints containing /mostpurchased for query1 onclick would generate the table via a function
+# queryParameters for future querying on this analysis can get each customer's most purchased item, cater to the
+# loyal customers or even get most purchased customers from members who have highest rank
 @app.route("/mostPurchased", methods=['GET', 'POST'])
 def mostPurchased():
     if request.method == 'GET':
@@ -176,7 +178,10 @@ def querylist1():
     conn.close()
     return render_template("list.html", rows=rows)
 
-
+# make different endpoints containing /memberRanking for query1
+# onclick would generate the table via a function
+# queryParameters for future querying on this analysis can contain cid, member. Can also use queryParameters to check
+# which customer has highest ranking (is a repeating customer, will become loyal to Van Deli)
 @app.route('/query2')
 def querylist2():
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)

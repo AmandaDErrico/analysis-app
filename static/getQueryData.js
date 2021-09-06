@@ -1,7 +1,4 @@
 function getMostPurchased() {
-//              # get html element by id or by class
-//              # insert rows inside the table
-      console.log("test123")
       $.ajax({
               url: '/mostPurchased',
               type: 'GET',
@@ -9,9 +6,9 @@ function getMostPurchased() {
               success: function(res) {
               // clear table here
               document.getElementById("mostPurchasedProduct").innerHTML = "";
-              console.log(res)
+              // get div matching the table from the first query and append
               var table = $("#mostPurchasedProduct")
-              // res.product_name is ramen
+                // append one record
                 table.append(
                 "<thead>" +
                 "<td>product_name</td>" +
@@ -30,9 +27,6 @@ function getMostPurchased() {
 }
 
 function getCustomerMemberAndRanking() {
-//              # get html element by id or by class
-//              # insert rows inside the table
-      console.log("test")
       $.ajax({
               url: '/memberAndRanking',
               type: 'GET',
@@ -40,9 +34,8 @@ function getCustomerMemberAndRanking() {
               success: function(res) {
               // clear table here
               document.getElementById("customerMemberAndRanking").innerHTML = "";
-              console.log(res)
               var table = $("#customerMemberAndRanking")
-              // res.product_name is ramen
+                // append headers
                 table.append(
                 "<thead>" +
                 "<td>customer_id</td>" +
@@ -52,9 +45,9 @@ function getCustomerMemberAndRanking() {
                 "<td>member</td>" +
                 "<td>ranking</td>" +
                 "</thead>");
-//                console.log(res[0])
+
+                // get each object in json array
                 for (var row in res) {
-//                    console.log(row)
                     var jsonData = res[row]
                     table.append(
                     "<tr>" +

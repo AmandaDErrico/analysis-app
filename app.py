@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 import mysql.connector as sql
 from flaskext.mysql import MySQL
 import pymysql
@@ -19,6 +19,14 @@ mysql.init_app(app)
 @app.before_first_request
 def before_first_request_func():
     createrPartitionsInsertData()
+
+import os
+from flask import send_from_directory
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 def createrPartitionsInsertData():
     # for A less than join date - (A, 2021-01-07)
@@ -104,6 +112,10 @@ def createrPartitionsInsertData():
 def home():
     return render_template('home.html')
 
+@app.route('/list')
+def list():
+    return render_template('list.html')
+
 # make different endpoints containing /mostpurchased for query1 onclick would generate the table via a function
 # queryParameters for future querying on this analysis can get each customer's most purchased item, cater to the
 # loyal customers or even get most purchased customers from members who have highest rank
@@ -132,10 +144,13 @@ def mostPurchased():
     rows = cur.fetchall()
     conn.close()
     for result in rows:
-        d.update({"product_name": result[0], "numPurchased": result[1]})
-        jsonList.append(d)
-        d = {}
-    return jsonList
+        d.update({"mostPurchasedTable": {"product_name": result[0], "numPurchased": result[1]}})
+    response = app.response_class(
+        response=json.dumps(d["mostPurchasedTable"]),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 @app.route('/query1')
 def querylist1():

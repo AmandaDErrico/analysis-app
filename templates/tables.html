@@ -4,29 +4,33 @@
     <meta charset="UTF-8">
     <title>Queries</title>
     <script src="{{ url_for('static', filename='getQueryData.js') }}"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 <h1>Tables for Queries</h1>
 
 <div id="query1">
-    <form name="mostPurchased" onsubmit="getMostPurchased()">
-        <button type="submit" id="submitButton" value="Get Most Purchased">Get Most Purchased</button>
-    </form>
+    <button type="button" id="mostPurchased" onclick="getMostPurchased()">Get Most Purchased</button>
 </div>
 
-<table border=1 id="tbl">
+<table border=1 id="mostPurchasedProduct">
 <!--    <thead>-->
 <!--    <td>product_name</td>-->
 <!--    <td>numPurchased</td>-->
 <!--    </thead>-->
 
-    <!--  {% for row in rows %}-->
-    <!--  <tr>-->
-    <!--    <td>{{row[0]}}</td>-->
-    <!--    <td>{{row[1]}}</td>-->
-    <!--  </tr>-->
-    <!--  {% endfor %}-->
+<!--      {% for row in rows %}-->
+<!--      <tr>-->
+<!--        <td>{{row[0]}}</td>-->
+<!--        <td>{{row[1]}}</td>-->
+<!--      </tr>-->
+<!--      {% endfor %}-->
 </table>
+
+<table border="1" id="getCustomerMemberAndRanking">
+
+</table>
+<a href = "/">Go back to home page</a>
 </body>
 </html>

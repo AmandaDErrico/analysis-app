@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>AnalysisApp</title>
+    <script src="{{ url_for('static', filename='getQueryData.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<h1>Welcome to AnalysisApp</h1>
+<h1>Welcome to VanDeli</h1>
+<p>By Amanda D'Errico</p>
+<div id="query">
+    <button type="button" id="queryPage" onclick="getQueries()">Go To Analysis</button>
+</div>
 </body>
 </html>

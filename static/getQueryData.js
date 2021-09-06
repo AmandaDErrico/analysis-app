@@ -66,3 +66,7 @@ function getCustomerMemberAndRanking() {
               }
           });
 }
+
+function getQueries() {
+    window.location = "http://localhost:5000/query"
+}

@@ -29,7 +29,7 @@ def favicon():
 
 
 # homepage
-@app.route('/')
+@app.route('/index.html')
 def home():
     return render_template('home.html')
 

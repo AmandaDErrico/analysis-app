@@ -1,9 +1,8 @@
 import json
-
-from flask import Flask, render_template, request, Response, jsonify
+import os
+from flask import Flask, render_template, request, Response, send_from_directory
 import mysql.connector as sql
 from flaskext.mysql import MySQL
-import pymysql
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -20,13 +19,12 @@ mysql.init_app(app)
 def before_first_request_func():
     createrPartitionsInsertData()
 
-import os
-from flask import send_from_directory
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 def createrPartitionsInsertData():
     # for A less than join date - (A, 2021-01-07)
@@ -108,13 +106,11 @@ def createrPartitionsInsertData():
     print("Table sales_cid inserted successfully")
     conn.close()
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
 
-@app.route('/list')
-def list():
-    return render_template('list.html')
 
 # make different endpoints containing /mostpurchased for query1 onclick would generate the table via a function
 # queryParameters for future querying on this analysis can get each customer's most purchased item, cater to the
@@ -152,19 +148,21 @@ def mostPurchased():
     )
     return response
 
-@app.route('/query1')
-def querylist1():
-    return render_template("tables.html")
 
+@app.route('/memberAndRanking', methods=['GET', 'POST'])
+def memberAndRanking():
+    if request.method == 'POST':
+        print("THIS WAS A POST")
+    if request.method == 'GET':
+        print("THIS WAS A GET")
+    else:
+        print("THIS WAS AN ERROR")
+        return Response("Record not found", status=400)
 
-# make different endpoints containing /memberRanking for query1
-# onclick would generate the table via a function
-# queryParameters for future querying on this analysis can contain cid, member. Can also use queryParameters to check
-# which customer has highest ranking (is a repeating customer, will become loyal to Van Deli)
-@app.route('/query2')
-def querylist2():
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
     cur = conn.cursor()
+    jsonList = []
+    d = {}
 
     query2 = "select t.*, DENSE_RANK() OVER (PARTITION BY t.customer_id order by t.order_date) as 'ranking' " \
              "from (" \
@@ -179,10 +177,39 @@ def querylist2():
              "order by customer_id, order_date, product_name) t "
 
     cur.execute(query2)
-
     rows = cur.fetchall()
     conn.close()
-    return render_template("list.html", rows=rows)
+    for result in rows:
+        if d.get("memberRanking") == None:
+            d.update(
+                {"memberRanking": [{"customer_id": result[0], "order_date": str(result[1]), "product_name": result[2],
+                                    "price": result[3], "member": result[4], "ranking": result[5]}]})
+        else:
+            d["memberRanking"].append({"customer_id": result[0], "order_date": str(result[1]), "product_name": result[2],
+                                    "price": result[3], "member": result[4], "ranking": result[5]})
+
+    response = app.response_class(
+        response=json.dumps(d["memberRanking"]),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route('/query1')
+def querylist1():
+    return render_template("tables.html")
+
+
+@app.route('/query2')
+def querylist2():
+    return render_template("tables.html")
+
+
+# make different endpoints containing /memberRanking for query1
+# onclick would generate the table via a function
+# queryParameters for future querying on this analysis can contain cid, member. Can also use queryParameters to check
+# which customer has highest ranking (is a repeating customer, will become loyal to Van Deli)
 
 
 if __name__ == '__main__':

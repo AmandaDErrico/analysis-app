@@ -20,40 +20,6 @@ mysql.init_app(app)
 def before_first_request_func():
     createrPartitionsInsertData()
 
-
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-
-# @app.route('/enternew')
-# def new_student():
-#     return render_template('student.html')
-
-
-# @app.route('/addrec', methods=['POST', 'GET'])
-# def addrec():
-#     if request.method == 'POST':
-#         try:
-#             cid = request.form['cid']
-#             odate = request.form['od']
-#             pid = request.form['pid']
-#
-#             with sql.connect(database) as con:
-#                 cur = con.cursor()
-#
-#                 cur.execute("INSERT INTO SALES (customer_id, order_date, product_id) VALUES (?,?,?)", (cid, odate, pid))
-#
-#                 con.commit()
-#                 msg = "Record successfully added"
-#         except:
-#             con.rollback()
-#             msg = "error in insert operation"
-#
-#         finally:
-#             return render_template("result.html", msg=msg)
-#             con.close()
-
 def createrPartitionsInsertData():
     # for A less than join date - (A, 2021-01-07)
     # for A join date and later - (A, MAXVALUE)
@@ -134,36 +100,27 @@ def createrPartitionsInsertData():
     print("Table sales_cid inserted successfully")
     conn.close()
 
+@app.route('/')
+def home():
+    return render_template('home.html')
+
 # make different endpoints containing /mostpurchased for query1 onclick would generate the table via a function
 # queryParameters for future querying on this analysis can get each customer's most purchased item, cater to the
 # loyal customers or even get most purchased customers from members who have highest rank
 @app.route("/mostPurchased", methods=['GET', 'POST'])
 def mostPurchased():
+    if request.method == 'POST':
+        print("THIS WAS A POST")
     if request.method == 'GET':
         print("THIS WAS A GET")
-        name = request.args.get("customer_id")
     else:
+        print("THIS WAS AN ERROR")
         return Response("Record not found", status=400)
 
     conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
     cur = conn.cursor()
+    jsonList = []
     d = {}
-
-    query1 = "select * from SALES_CID where customer_id = '%s'" % name
-    cur.execute(query1)
-
-    rows = cur.fetchall()
-    conn.close()
-
-    for result in rows:
-        d.update({result[0]: {"customer_id": result[0], "product_id": result[2]}})
-    return json.dumps(d)
-
-
-@app.route('/query1')
-def querylist1():
-    conn = sql.connect(host="localhost", user="python", passwd="python123", database="MyDB", autocommit=True)
-    cur = conn.cursor()
 
     query1 = "SELECT m.product_name, count(s.product_id) as numPurchased " \
              "from SALES_PID s, MENU m " \
@@ -171,12 +128,19 @@ def querylist1():
              "group by s.product_id " \
              "order by s.product_id desc " \
              "limit 1 "
-
     cur.execute(query1)
-
     rows = cur.fetchall()
     conn.close()
-    return render_template("list.html", rows=rows)
+    for result in rows:
+        d.update({"product_name": result[0], "numPurchased": result[1]})
+        jsonList.append(d)
+        d = {}
+    return jsonList
+
+@app.route('/query1')
+def querylist1():
+    return render_template("tables.html")
+
 
 # make different endpoints containing /memberRanking for query1
 # onclick would generate the table via a function

@@ -4,33 +4,33 @@
   <meta charset="UTF-8">
   <title>ANALYSIS APP</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script type="text/javascript">
-        {% include "dropDownQuery.js" %}
-    </script>
-  <!-- The contents of myscript.js will be loaded inside the script tag -->
+<!--  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/bootstrap.min.css') }}">-->
+<!--  <script type="text/javascript">-->
+<!--        {% include "getQueryData.js" %}-->
+<!--    </script>-->
+  <script src="{{ url_for('static', filename='dropDownQuery.js') }}"></script>
 </head>
 
 <body>
 
 <div>
   <form name="mostPurchased" onsubmit="getMostPurchased()">
-  <input type="text" id="customerName"/>
   <button type="submit" id="submitButton" value="Get Most Purchased">Get Most Purchased</button>
   </form>
 </div>
 
-<table border = 1>
+<table border = 1 id="tbl">
   <thead>
   <td>product_name</td>
   <td>numPurchased</td>
   </thead>
 
-  {% for row in rows %}
-  <tr>
-    <td>{{row[0]}}</td>
-    <td>{{row[1]}}</td>
-  </tr>
-  {% endfor %}
+<!--  {% for row in rows %}-->
+<!--  <tr>-->
+<!--    <td>{{row[0]}}</td>-->
+<!--    <td>{{row[1]}}</td>-->
+<!--  </tr>-->
+<!--  {% endfor %}-->
 </table>
 
 <a href = "/">Go back to home page</a>

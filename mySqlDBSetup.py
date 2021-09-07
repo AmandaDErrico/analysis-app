@@ -117,9 +117,9 @@ def createrPartitionsInsertData():
                 ")"
 
     alter_pid = "ALTER TABLE SALES_PID PARTITION BY RANGE (product_id)(" \
-                "PARTITION p0 VALUES LESS THAN(1), " \
-                "PARTITION p1 VALUES LESS THAN(2), " \
-                "PARTITION p2 VALUES LESS THAN(3), " \
+                "PARTITION p0 VALUES LESS THAN(2), " \
+                "PARTITION p1 VALUES LESS THAN(3), " \
+                "PARTITION p2 VALUES LESS THAN(4), " \
                 "PARTITION p3 VALUES LESS THAN(MAXVALUE)" \
                 ")"
 
